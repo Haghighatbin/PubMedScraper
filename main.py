@@ -51,7 +51,7 @@ class PubMedScraper:
         )
         return query
 
-    def fetch_records(self, query: str, retmax: int = 250) -> List[Dict[str, Any]]:
+    def fetch_records(self, query: str, retmax: int = config.MAX_QUERIES) -> List[Dict[str, Any]]:
         """
         Execute a PubMed search query and retrieve MEDLINE records.
 
