@@ -9,6 +9,9 @@ from typing import List
 #: Folder to save the results. Leila: Ensure this directory exists before writing.
 RES_DIR: str = "results"
 
+#: Number of maximum queries to fetch
+MAX_QUERIES = 200
+
 #: Email associated with the NCBI queries (NCBI requires this!).
 NCBI_EMAIL: str = "aminhb@tutanota.com"
 
@@ -62,7 +65,7 @@ JOURNALS: List[str] = [
     "American Journal of Respiratory and Critical Care Medicine",
     "Intensive Care Medicine",
     "Critical Care Medicine",
-    "Critical care",
+    "Crit Care",
     "Chest",
     "BMJ",
     "Annals of Intensive care",
