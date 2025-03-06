@@ -7,6 +7,7 @@ import pandas as pd
 from Bio import Entrez, Medline
 from rich.console import Console
 from rich.panel import Panel
+from rich.status import Status
 
 import config
 
@@ -32,8 +33,8 @@ class PubMedScraper:
         self.excel_filename: str = os.path.join(config.RES_DIR, f"pubmed_results_{timestamp}.xlsx")
         self.all_data: List[Dict[str, Any]] = []
         console.log(
-            f"[green]Initialised PubMedScraper.[/green] "
-            f"Output file: [bold]{self.excel_filename}[/bold]"
+            f"\n[green]Initialised PubMedScraper.[/green]"
+            f"Output file: [bold]{self.excel_filename}[/bold]\n"
         )
 
     def construct_query(self, journal: str) -> str:
@@ -43,11 +44,17 @@ class PubMedScraper:
         :param journal: The name of the journal for the [TA] field in PubMed.
         :return: The complete query string to be used in PubMed search.
         """
-        journal_query = f'"{journal}"[TA]'
+        journal_query = f'"{journal}"[Journal]'
+        # query = (
+        #     f'({config.RCT_QUERY} AND {config.CRITICAL_QUERY} 
+        #       AND ({journal_query}) AND {config.DATE_QUERY}
+        #       AND {config.HUMANS_FILTER}) '
+        #     f'NOT {config.EXCLUSION_QUERY})'
+        # )
         query = (
-            f'(({config.RCT_QUERY}) AND ({config.CRITICAL_QUERY}) '
-            f'AND {config.HUMANS_FILTER}) '
-            f'{config.EXCLUSION_QUERY} AND ({journal_query}) AND {config.DATE_QUERY}'
+            f'({config.RCT_QUERY} AND {config.CRITICAL_QUERY} AND ({journal_query}) AND {config.DATE_QUERY} '
+            f'{")" if journal.lower() == "annals of intensive care" else f"AND {config.HUMANS_FILTER})"} '
+            f'NOT {config.EXCLUSION_QUERY}'
         )
         return query
 
@@ -177,17 +184,21 @@ class PubMedScraper:
         try:
             for journal in config.JOURNALS:
                 console.log(Panel.fit(f"Processing journal: {journal}", title="Journal", style="blue"))
+
                 query: str = self.construct_query(journal)
-                records: List[Dict[str, Any]] = self.fetch_records(query)
+                
+                with console.status(f"Fetching records for {journal}...", spinner="dots"):
+                    records: List[Dict[str, Any]] = self.fetch_records(query)
 
                 if not records:
                     console.log(f"[yellow]No records found for journal: {journal}[/yellow]")
                     continue
 
-                for rec in records:
-                    processed: Dict[str, Any] = self.process_record(rec)
-                    if processed:
-                        self.all_data.append(processed)
+                with console.status(f"Processing records for {journal}...", spinner="dots"):
+                    for rec in records:
+                        processed: Dict[str, Any] = self.process_record(rec)
+                        if processed:
+                            self.all_data.append(processed)
 
             self.update_excel(self.all_data)
             console.log(Panel.fit("Processing completed.", style="green"))

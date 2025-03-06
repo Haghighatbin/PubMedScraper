@@ -10,7 +10,7 @@ from typing import List
 RES_DIR: str = "results"
 
 #: Number of maximum queries to fetch
-MAX_QUERIES = 200
+MAX_QUERIES = 500
 
 #: Email associated with the NCBI queries (NCBI requires this!).
 NCBI_EMAIL: str = "aminhb@tutanota.com"
@@ -21,6 +21,7 @@ RCT_QUERY: str = (
     '"Randomized Controlled Trials as Topic"[MeSH Terms] OR '
     '"Random Allocation"[MeSH Terms] OR '
 
+    # '"trial"[Title/Abstract] OR '
     '"randomized"[Title/Abstract] OR '
     '"randomised"[Title/Abstract] OR '
     '"randomly"[Title/Abstract])'
@@ -30,19 +31,18 @@ RCT_QUERY: str = (
 CRITICAL_QUERY: str = (
     '('
     '"critical care"[MeSH Terms] OR '
-    '"intensive care units"[MeSH Terms] OR '
-    '"critical illness"[MeSH Terms] OR '
-    '"ICU"[Title/Abstract] OR '
-    '"high dependency unit*"[Title/Abstract] OR '
-    '"respiration, artificial"[MeSH Terms] OR '
     '"intensive care"[Title/Abstract] OR '
     '"intensive care unit"[Title/Abstract] OR '
+    '"intensive care units"[MeSH Terms] OR '
+    '"critical illness"[MeSH Terms] OR '
     '"critical illness"[Title/Abstract] OR '
+    '"critically ill"[Title/Abstract] OR '
+    '"ICU"[Title/Abstract] OR '
+    '"high dependency unit"[Title/Abstract] OR '
+    '"respiration, artificial"[MeSH Terms] OR '
     '"Critical Care"[Title/Abstract] OR '
-    '"critical ill*"[Title/Abstract] OR '
     '"Intensive therapy"[Title/Abstract] OR '
     '"mechanical ventilation"[Title/Abstract] OR '
-    '"mechanical ventilat*"[Title/Abstract]) OR '
     '("mechanical"[Title/Abstract] AND "ventilation"[Title/Abstract])'
     ')'
 )
@@ -51,8 +51,8 @@ CRITICAL_QUERY: str = (
 HUMANS_FILTER: str = '"humans"[MeSH Terms]'
 
 #: Exclusion query to filter out reviews and meta-analyses.
-EXCLUSION_QUERY: str = (
-    'NOT ("systematic review"[Publication Type] OR '
+EXCLUSION_QUERY = (
+    '("Systematic Review"[Publication Type] OR '
     '"Meta-Analysis"[Publication Type] OR '
     '"Review"[Publication Type])'
 )
@@ -68,7 +68,7 @@ JOURNALS: List[str] = [
     "Crit Care",
     "Chest",
     "BMJ",
-    "Annals of Intensive care",
+    "Annals of intensive care",
     "JAMA Internal Medicine",
     "JAMA Network Open",
     "Annals of the American Thoracic Society"
